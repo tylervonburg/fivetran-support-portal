@@ -35,43 +35,6 @@ It is designed for GitHub Pages and demonstrates:
 
 Open `index.html` in a browser.
 
-## Publish to GitHub Pages
-
-1. Create a GitHub repository.
-2. Add these files to the repository root:
-   - `index.html`
-   - `styles.css`
-   - `app.js`
-   - `README.md`
-3. Commit and push to the `main` branch.
-4. In GitHub, open `Settings` → `Pages`.
-5. Under `Build and deployment`, choose:
-   - `Source`: `Deploy from a branch`
-   - `Branch`: `main`
-   - `Folder`: `/ (root)`
-6. Save the settings.
-7. Wait for GitHub Pages to publish the site.
-8. Share the generated GitHub Pages URL.
-
-## Suggested Git Commands
-
-```bash
-git init
-git add index.html styles.css app.js README.md
-git commit -m "Add Fivetran L1 Support Agent prototype"
-git branch -M main
-git remote add origin <your-repo-url>
-git push -u origin main
-```
-
-If the repo already exists:
-
-```bash
-git add index.html styles.css app.js README.md
-git commit -m "Add GitHub Pages prototype"
-git push
-```
-
 ## Prototype Features
 
 ### Home
@@ -97,4 +60,3 @@ git push
   - human bypass availability
   - security-sensitive escalation
   - refusal to expose internal or other-customer data
-
