@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fivetran L1 Support Agent Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">GitHub Pages Prototype</p>
+        <h1>Fivetran L1 Support Agent</h1>
+        <p class="hero__lede">
+          A static front-end prototype of the chat-first support experience: guided intake, natural troubleshooting,
+          direct human bypass, security-sensitive routing, safe refusal, and structured escalation preview.
+        </p>
+        <div class="hero__badges">
+          <span>State machine driven</span>
+          <span>Human handoff always available</span>
+          <span>Confidentiality guardrails enforced</span>
+        </div>
+      </div>
+      <div class="hero__panel">
+        <div class="hero__stat">
+          <span class="hero__label">Current state</span>
+          <strong id="hero-state">conversation_start</strong>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__label">Ticket status</span>
+          <strong id="hero-ticket-status">No ticket created</strong>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__label">Prototype mode</span>
+          <strong>Static GitHub Pages</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="portal">
+        <div class="portal__masthead">
+          <div class="portal__brand">
+            <div class="brand-mark">F</div>
+            <div>
+              <p class="brand-title">support.fivetran.com</p>
+              <p class="brand-subtitle">AI-first intake prototype</p>
+            </div>
+          </div>
+          <div class="portal__tabs">
+            <button id="tab-home" class="tab tab--active" data-view="home" type="button">Home</button>
+            <button id="tab-tickets" class="tab" data-view="tickets" type="button">My Tickets</button>
+          </div>
+        </div>
+
+        <div id="view-home" class="portal__grid">
+          <aside class="sidebar sidebar--left">
+            <div class="panel">
+              <div class="panel__heading">
+                <h2>Quick Scenarios</h2>
+                <p>Load a realistic starting point.</p>
+              </div>
+              <div class="scenario-list">
+                <button class="scenario" data-scenario="connector_issue" type="button">
+                  <strong>Connector issue</strong>
+                  <span>Standard product intake then troubleshoot</span>
+                </button>
+                <button class="scenario" data-scenario="activations_issue" type="button">
+                  <strong>Activations issue</strong>
+                  <span>Permission-aware troubleshooting flow</span>
+                </button>
+                <button class="scenario" data-scenario="billing_human" type="button">
+                  <strong>Billing + human request</strong>
+                  <span>Immediate handoff behavior</span>
+                </button>
+                <button class="scenario" data-scenario="security_issue" type="button">
+                  <strong>Security-sensitive report</strong>
+                  <span>Immediate secure escalation route</span>
+                </button>
+                <button class="scenario" data-scenario="other_customer_request" type="button">
+                  <strong>Other-customer data request</strong>
+                  <span>Safe refusal and redirect</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="panel panel--soft">
+              <div class="panel__heading">
+                <h2>Current Experience Notes</h2>
+              </div>
+              <ul class="mini-list">
+                <li>The customer can always bypass to a human ticket.</li>
+                <li>Troubleshooting is blocked until required intake is complete.</li>
+                <li>Security-sensitive issues bypass normal troubleshooting.</li>
+                <li>The agent never exposes internal or other-customer data.</li>
+              </ul>
+            </div>
+          </aside>
+
+          <section class="chat-shell">
+            <div class="chat-header">
+              <div>
+                <h2>L1 Support Conversation</h2>
+                <p>Customer-facing support AI persona with production guardrails.</p>
+              </div>
+              <button id="human-handoff" class="button button--secondary" type="button">Open a support ticket</button>
+            </div>
+
+            <div id="chat-log" class="chat-log" aria-live="polite"></div>
+
+            <div class="composer">
+              <label class="composer__label" for="chat-input">Reply as the customer</label>
+              <div class="composer__controls">
+                <textarea id="chat-input" rows="3" placeholder="Describe the issue, answer the intake question, or ask for a human ticket."></textarea>
+                <button id="send-message" class="button button--primary" type="button">Send</button>
+              </div>
+            </div>
+          </section>
+
+          <aside class="sidebar sidebar--right">
+            <div class="panel">
+              <div class="panel__heading">
+                <h2>Runtime State</h2>
+                <p>Mirrors the orchestration model.</p>
+              </div>
+              <dl class="state-list">
+                <div>
+                  <dt>State</dt>
+                  <dd class="state-pair">
+                    <span id="state-value">Conversation start</span>
+                    <code id="state-key">conversation_start</code>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Support domain</dt>
+                  <dd class="state-pair">
+                    <span id="domain-value">Not selected</span>
+                    <code id="domain-key">none</code>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Product area</dt>
+                  <dd class="state-pair">
+                    <span id="product-value">Not selected</span>
+                    <code id="product-key">none</code>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Issue type</dt>
+                  <dd class="state-pair">
+                    <span id="issue-type-value">Not selected</span>
+                    <code id="issue-type-key">none</code>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="panel">
+              <div class="panel__heading">
+                <h2>Required Intake</h2>
+                <p>Checklist by support path.</p>
+              </div>
+              <ul id="intake-checklist" class="checklist"></ul>
+            </div>
+
+            <div class="panel">
+              <div class="panel__heading">
+                <h2>Escalation Preview</h2>
+                <p>Generated when human handoff is needed.</p>
+              </div>
+              <pre id="ticket-preview" class="ticket-preview">No escalation prepared yet.</pre>
+            </div>
+          </aside>
+        </div>
+
+        <section id="view-tickets" class="tickets-view is-hidden">
+          <div class="tickets-view__hero">
+            <div>
+              <p class="tickets-view__eyebrow">My Tickets</p>
+              <h2>Open support tickets for Acme Retail</h2>
+              <p>
+                This mock view shows active support cases already associated with the customer account. Customers can open an existing
+                case, review the latest update, or return to the AI-first intake flow for a new issue.
+              </p>
+            </div>
+            <button id="tickets-new-request" class="button button--primary" type="button">Start a new request</button>
+          </div>
+
+          <div class="tickets-toolbar">
+            <div class="tickets-filters" role="tablist" aria-label="Ticket status filters">
+              <button class="filter-chip filter-chip--active" data-filter="all" type="button">All</button>
+              <button class="filter-chip" data-filter="open" type="button">Open</button>
+              <button class="filter-chip" data-filter="pending" type="button">Pending</button>
+              <button class="filter-chip" data-filter="hold" type="button">On hold</button>
+              <button class="filter-chip" data-filter="closed" type="button">Closed</button>
+            </div>
+            <p id="tickets-count" class="tickets-count">4 tickets</p>
+          </div>
+
+          <div class="tickets-grid">
+            <section id="tickets-list" class="tickets-list">
+              <article class="ticket-card ticket-card--active" data-ticket-id="FTSUP-18427" data-ticket-filter="open">
+                <div class="ticket-card__top">
+                  <div>
+                    <p class="ticket-card__id">FTSUP-18427</p>
+                    <h3>NetSuite connector showing reconnect required</h3>
+                  </div>
+                  <span class="ticket-chip ticket-chip--open">Open</span>
+                </div>
+                <p class="ticket-card__meta">Product support · Standard Fivetran issue · Connector issue</p>
+                <p class="ticket-card__summary">
+                  Latest update: Support confirmed the connection began failing at 8:03 AM ET and asked the customer to validate the current source authorization.
+                </p>
+                <div class="ticket-card__footer">
+                  <span>Owner: Tyler von Burg</span>
+                  <span>Updated 24 minutes ago</span>
+                </div>
+              </article>
+
+              <article class="ticket-card" data-ticket-id="FTSUP-18391" data-ticket-filter="pending">
+                <div class="ticket-card__top">
+                  <div>
+                    <p class="ticket-card__id">FTSUP-18391</p>
+                    <h3>Activation sync completing with 0 records sent</h3>
+                  </div>
+                  <span class="ticket-chip ticket-chip--pending">Pending</span>
+                </div>
+                <p class="ticket-card__meta">Product support · Activations issue</p>
+                <p class="ticket-card__summary">
+                  Latest update: Customer provided permission for support to trigger the affected sync and attached screenshots showing field-mapping mismatches.
+                </p>
+                <div class="ticket-card__footer">
+                  <span>Owner: Vandana Veeraraghavan</span>
+                  <span>Updated 2 hours ago</span>
+                </div>
+              </article>
+
+              <article class="ticket-card" data-ticket-id="FTSUP-18264" data-ticket-filter="hold">
+                <div class="ticket-card__top">
+                  <div>
+                    <p class="ticket-card__id">FTSUP-18264</p>
+                    <h3>Invoice clarification request for February usage</h3>
+                  </div>
+                  <span class="ticket-chip ticket-chip--hold">On hold</span>
+                </div>
+                <p class="ticket-card__meta">Billing support · Invoice query</p>
+                <p class="ticket-card__summary">
+                  Latest update: Support requested confirmation of the billing period and the specific line items the customer wants reviewed.
+                </p>
+                <div class="ticket-card__footer">
+                  <span>Owner: Ameen Khan</span>
+                  <span>Updated yesterday</span>
+                </div>
+              </article>
+
+              <article class="ticket-card" data-ticket-id="FTSUP-18102" data-ticket-filter="closed">
+                <div class="ticket-card__top">
+                  <div>
+                    <p class="ticket-card__id">FTSUP-18102</p>
+                    <h3>Snowflake destination load delay resolved</h3>
+                  </div>
+                  <span class="ticket-chip ticket-chip--closed">Closed</span>
+                </div>
+                <p class="ticket-card__meta">Product support · Destination issue</p>
+                <p class="ticket-card__summary">
+                  Latest update: Support confirmed the delayed load completed successfully and the customer verified the destination is current.
+                </p>
+                <div class="ticket-card__footer">
+                  <span>Owner: Tyler von Burg</span>
+                  <span>Resolved 3 days ago</span>
+                </div>
+              </article>
+            </section>
+
+            <aside class="tickets-side">
+              <div class="panel ticket-detail">
+                <div class="panel__heading">
+                  <h2>Selected Ticket</h2>
+                  <p>Customer-visible summary and latest updates.</p>
+                </div>
+                <div class="ticket-detail__header">
+                  <div>
+                    <p id="ticket-detail-id" class="ticket-card__id">FTSUP-18427</p>
+                    <h3 id="ticket-detail-title">NetSuite connector showing reconnect required</h3>
+                  </div>
+                  <span id="ticket-detail-status" class="ticket-chip ticket-chip--open">Open</span>
+                </div>
+                <p id="ticket-detail-meta" class="ticket-card__meta">Product support · Standard Fivetran issue · Connector issue</p>
+                <p id="ticket-detail-summary" class="ticket-card__summary">
+                  Latest update: Support confirmed the connection began failing at 8:03 AM ET and asked the customer to validate the current source authorization.
+                </p>
+                <div class="ticket-detail__actions">
+                  <button id="ticket-reply-button" class="button button--secondary" type="button">Reply to ticket</button>
+                </div>
+                <div class="ticket-timeline">
+                  <h4>Recent activity</h4>
+                  <ul id="ticket-timeline" class="timeline-list"></ul>
+                </div>
+              </div>
+
+              <div id="ticket-thread-panel" class="panel ticket-thread is-hidden">
+                <div class="panel__heading">
+                  <h2>Ticket Conversation</h2>
+                  <p>Mock customer-visible thread for the selected support ticket.</p>
+                </div>
+                <div id="ticket-thread-log" class="ticket-thread__log"></div>
+                <div class="ticket-thread__composer">
+                  <label class="composer__label" for="ticket-thread-input">Reply to this ticket</label>
+                  <div class="composer__controls">
+                    <textarea id="ticket-thread-input" rows="3" placeholder="Write a reply as the customer."></textarea>
+                    <button id="ticket-thread-send" class="button button--primary" type="button">Send reply</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel">
+                <div class="panel__heading">
+                  <h2>Account Snapshot</h2>
+                  <p>Mock account context for this customer.</p>
+                </div>
+                <dl class="state-list">
+                  <div>
+                    <dt>Account</dt>
+                    <dd>Acme Retail</dd>
+                  </div>
+                  <div>
+                    <dt>Plan</dt>
+                    <dd>Enterprise</dd>
+                  </div>
+                  <div>
+                    <dt>Open tickets</dt>
+                    <dd>3 active cases</dd>
+                  </div>
+                  <div>
+                    <dt>Recent channel</dt>
+                    <dd>Support portal chat</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="panel panel--soft">
+                <div class="panel__heading">
+                  <h2>What customers can do here</h2>
+                </div>
+                <ul class="mini-list">
+                  <li>Review currently open support cases tied to their account.</li>
+                  <li>See the latest support update before replying.</li>
+                  <li>Return to Home to start a new AI-guided intake flow.</li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
