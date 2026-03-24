@@ -547,7 +547,48 @@ function renderTicketPreview() {
   }
 
   const payload = buildEscalationPayload();
-  dom.ticketPreview.textContent = JSON.stringify(payload, null, 2);
+  dom.ticketPreview.textContent = formatEscalationPreview(payload);
+}
+
+function formatEscalationPreview(payload) {
+  const intakeLines = Object.entries(payload.collected_intake_fields || {})
+    .map(([key, value]) => `- ${String(key).replace(/_/g, " ")}: ${value}`)
+    .join("\n");
+
+  const evidenceLines = (payload.evidence || [])
+    .map((item) => `- ${item}`)
+    .join("\n");
+
+  const recommendationLines = (payload.initial_recommendations_provided_by_l1_support_ai_agent || [])
+    .map((item) => `- ${item}`)
+    .join("\n");
+
+  const nextStepLines = (payload.suggested_next_steps_for_human_cse || [])
+    .map((item) => `- ${item}`)
+    .join("\n");
+
+  const missingLines = (payload.missing_information || [])
+    .map((item) => `- ${item}`)
+    .join("\n");
+
+  const issueSummary = [
+    payload.issue_summary,
+    intakeLines ? "\nCollected Intake Fields\n" + intakeLines : "",
+    evidenceLines ? "\nEvidence\n" + evidenceLines : "",
+    payload.escalation_reason ? `\nEscalation Reason\n- ${String(payload.escalation_reason).replace(/_/g, " ")}` : "",
+    missingLines ? "\nImportant Missing Information\n" + missingLines : ""
+  ].filter(Boolean).join("\n");
+
+  return [
+    "Issue Summary",
+    issueSummary,
+    "",
+    "Initial Recommendations Provided by L1 Support AI Agent",
+    recommendationLines || "- No troubleshooting steps were attempted before escalation.",
+    "",
+    "Suggested Next Steps for Human CSE",
+    nextStepLines || "- Review the collected customer context and continue investigation."
+  ].join("\n");
 }
 
 function buildEscalationPayload() {
